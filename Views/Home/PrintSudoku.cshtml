@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Print";
+}
+
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<label style="font-size: 22px; position: fixed; top: -5px; left: 150px">@HttpContextAccessor.HttpContext.Session.GetString("Difficulty")</label>
+
+<!--
+Since Rotativa can't render some of the boostrap
+styles, these particular tables had to be hard coded
+unlike the main Index tables created with for loop
+-->
+
+<!-- Sudoku table to print -->
+<div>
+    @{var sudokuArray = new byte[81]; }
+    @{sudokuArray = @HttpContextAccessor.HttpContext.Session.Get("Values");}
+    @{var sudokuValue = new string[81];}
+
+    @for (int i = 0; i < 81; i++)
+    {
+        if (sudokuArray[i] == 0)
+        {
+            sudokuValue[i] = "";
+        }
+        else
+        {
+            sudokuValue[i] = sudokuArray[i].ToString();
+        }
+    }
+
+    <div>
+        <table style="position: fixed; left: 152px; top: 35px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[0]</td>
+                <td>@sudokuValue[1]</td>
+                <td>@sudokuValue[2]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[9]</td>
+                <td>@sudokuValue[10]</td>
+                <td>@sudokuValue[11]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[18]</td>
+                <td>@sudokuValue[19]</td>
+                <td>@sudokuValue[20]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 349px; top: 35px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[3]</td>
+                <td>@sudokuValue[4]</td>
+                <td>@sudokuValue[5]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[12]</td>
+                <td>@sudokuValue[13]</td>
+                <td>@sudokuValue[14]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[21]</td>
+                <td>@sudokuValue[22]</td>
+                <td>@sudokuValue[23]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 546px; top: 35px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[6]</td>
+                <td>@sudokuValue[7]</td>
+                <td>@sudokuValue[8]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[15]</td>
+                <td>@sudokuValue[16]</td>
+                <td>@sudokuValue[17]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[24]</td>
+                <td>@sudokuValue[25]</td>
+                <td>@sudokuValue[26]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 152px; top: 225px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[27]</td>
+                <td>@sudokuValue[28]</td>
+                <td>@sudokuValue[29]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[36]</td>
+                <td>@sudokuValue[37]</td>
+                <td>@sudokuValue[38]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[45]</td>
+                <td>@sudokuValue[46]</td>
+                <td>@sudokuValue[47]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 349px; top: 225px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[30]</td>
+                <td>@sudokuValue[31]</td>
+                <td>@sudokuValue[32]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[39]</td>
+                <td>@sudokuValue[40]</td>
+                <td>@sudokuValue[41]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[48]</td>
+                <td>@sudokuValue[49]</td>
+                <td>@sudokuValue[50]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 546px; top: 225px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[33]</td>
+                <td>@sudokuValue[34]</td>
+                <td>@sudokuValue[35]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[42]</td>
+                <td>@sudokuValue[43]</td>
+                <td>@sudokuValue[44]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[51]</td>
+                <td>@sudokuValue[52]</td>
+                <td>@sudokuValue[53]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 152px; top: 415px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[54]</td>
+                <td>@sudokuValue[55]</td>
+                <td>@sudokuValue[56]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[63]</td>
+                <td>@sudokuValue[64]</td>
+                <td>@sudokuValue[65]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[72]</td>
+                <td>@sudokuValue[73]</td>
+                <td>@sudokuValue[74]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 349px; top: 415px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[57]</td>
+                <td>@sudokuValue[58]</td>
+                <td>@sudokuValue[59]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[66]</td>
+                <td>@sudokuValue[67]</td>
+                <td>@sudokuValue[68]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[75]</td>
+                <td>@sudokuValue[76]</td>
+                <td>@sudokuValue[77]</td>
+            </tr>
+        </table>
+        <table style="position: fixed; left: 546px; top: 415px; width: 200px; height: 200px; font-size: 25px ">
+            <tr>
+                <td>@sudokuValue[60]</td>
+                <td>@sudokuValue[61]</td>
+                <td>@sudokuValue[62]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[69]</td>
+                <td>@sudokuValue[70]</td>
+                <td>@sudokuValue[71]</td>
+            </tr>
+            <tr>
+                <td>@sudokuValue[78]</td>
+                <td>@sudokuValue[79]</td>
+                <td>@sudokuValue[80]</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div style="width: 700px; height: 5px; background: white; position: fixed; top: 609px; left: 100px"></div>

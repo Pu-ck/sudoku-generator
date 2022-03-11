@@ -1,0 +1,212 @@
+﻿@{
+    ViewData["Title"] = "Generator";
+}
+
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<!-- Refresh every 30 minutes -->
+<meta http-equiv="refresh" content="1800" />
+
+<!-- Main navbar -->
+<nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-brand mb-0 h1">数独 Sudoku Generator</span>
+
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+            <!-- Open "help" modal -->
+            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#help"
+                style="width: 97px; border-radius: 0 !important; box-shadow: none; font-size: 20px; background-color: #343a40; border: none">
+                Help
+            </button>
+        </li>
+    </ul>
+
+    <span class="navbar-text">
+        Randomize and print sudoku puzzles
+    </span>
+</nav>
+
+<hr>
+
+<!-- Calling controller method to generate new sudoku -->
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    <div style="position: fixed; top: 107px;">
+        <div style="display: flex; gap: 4px; font-size: 15px; width: 100%">
+            <button type="submit" class="btn btn-outline-dark"
+                style="width: 97px; border-radius: 0 !important; box-shadow: none">
+                Generate
+            </button>
+        </div>
+
+        <!-- Choosing desired difficulty and sending it to parameter of controller method -->
+        <div style="position: relative; left: 365px; top: -25px">
+            @Html.DropDownList("difficulty", new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Easy", Value = "Easy"},
+                new SelectListItem { Text = "Medium", Value = "Medium"},
+                new SelectListItem { Text = "Hard", Value = "Hard"}
+            })
+        </div>
+    </div>
+}
+
+<!-- Disable/enable "Solution" button and "Print with solution" action link -->
+@if (ViewBag.EnableSolution == false)
+{
+    <div id="solution-button" style="position: fixed; font-size: 15px; left: 830px; top: 107px">
+        <button disabled type="submit" class="btn btn-outline-dark"
+            style="width: 97px; border-radius: 0 !important">
+            Solution
+        </button>
+    </div>
+
+    <div style="position: fixed; left: 1137px; top: 627px; font-size: 18px ">Print with solution</div>
+}
+else if (ViewBag.EnableSolution == true)
+{
+    <div id="solution-button" style="position: fixed; font-size: 15px; left: 830px; top: 107px ">
+        <button data-toggle="button" onclick=hideSolution() type="submit" class="btn btn-outline-dark"
+            style="width: 97px; border-radius: 0 !important; box-shadow: none">
+            Solution
+        </button>
+    </div>
+
+    <div style="position: fixed; left: 1137px; top: 627px; font-size: 18px ">@Html.ActionLink("Print with solution", "PrintSolution")</div>
+}
+
+<div style="position: fixed; left: 625px; top: 627px; font-size: 18px">@Html.ActionLink("Print", "PrintSudoku")</div>
+
+<!-- Boostrap modal with hints how to use the application -->
+<div class="modal fade" id="help" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Help</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li>Use "Generate" button to create a new sudoku puzzle</li>
+                    <li>Choose desired difficulty from a drop down list</li>
+                    <li>Use "Solution" button to show/hide solution for the current sudoku puzzle</li>
+                    <li>Use "Print" link to print the current sudoku puzzle</li>
+                    <li>Use "Print with solution" link to print both the current sudoku and it's solution</li>
+                    <li>The "Solution" button doesn't have to be pressed in order to include solution</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Generated sudoku -->
+<div class="grid-container" style="position: fixed; top: 155px; font-size: 20px">
+
+    @{var nextYCell = 0;}
+    @{var nextXCell = 0;}
+
+    @for (var k = 0; k < 9; k++)
+    {
+        <div>
+            <table>
+                @for (var j = 0 + nextYCell; j < 3 + nextYCell; j++)
+                {
+                    <tr>
+                        @for (var i = 0 + nextXCell; i < 3 + nextXCell; i++)
+                        {
+                            @if (ViewBag.Value[j, i] == 0)
+                            {
+                                <td style="color: white">@ViewBag.Value[j, i]</td>
+                            }
+                            else
+                            {
+                                <td>@ViewBag.Value[j, i]</td>
+                            }
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+        nextXCell += 3;
+        if (nextXCell > 6)
+        {
+            nextXCell = 0;
+            nextYCell += 3;
+        }
+    }
+</div>
+
+<!-- Empty solution -->
+<div class="grid-container" style="position: fixed; top: 155px; left: 830px">
+    @for (var i = 0; i < 9; i++)
+    {
+        <div>
+            <table>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+
+<!-- Sudoku solution -->
+<div id="solutionTable" class="grid-container" style="position: fixed; top: 155px; left: 830px; display: none; font-size: 20px">
+
+    @{nextYCell = 0;}
+    @{nextXCell = 0;}
+
+    @for (var k = 0; k < 9; k++)
+    {
+        <div>
+            <table>
+                @for (var j = 0 + nextYCell; j < 3 + nextYCell; j++)
+                {
+                    <tr>
+                        @for (var i = 0 + nextXCell; i < 3 + nextXCell; i++)
+                        {
+                            @if (ViewBag.Solution[j, i] == 0)
+                            {
+                                <td style="color: white">@ViewBag.Solution[j, i]</td>
+                            }
+                            else
+                            {
+                                <td>@ViewBag.Solution[j, i]</td>
+                            }
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+        nextXCell += 3;
+        if (nextXCell > 6)
+        {
+            nextXCell = 0;
+            nextYCell += 3;
+        }
+    }
+</div>
+
+<!-- Footer with link to GitHub -->
+<nav class="navbar navbar-dark bg-dark" style="position: fixed; left: 0; bottom: 0; width: 135px">
+    <span class="navbar-brand mb-0 h1">
+        <a href="https://github.com/Pu-ck" type="button" class="btn btn-outline-secondary"
+            style="width: 97px; border-radius: 0 !important; box-shadow: none; font-size: 20px; background-color: #343a40; border: none">
+            GitHub
+        </a>
+    </span>
+</nav>
