@@ -15,8 +15,8 @@ namespace SudokuGenerator.Controllers
         private readonly ILogger<HomeController> _logger;
 
         // 2D array with sudoku values
-        private int[,] sudokuSolution = new int[9,9];
-        private int[,] sudokuValues = new int [9,9];
+        private int[,] _sudokuSolution = new int[9,9];
+        private int[,] _sudokuValues = new int [9,9];
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -26,11 +26,11 @@ namespace SudokuGenerator.Controllers
         // Startup View with empty sudoku cells and disabled "Solution" button
         public IActionResult Index()
         {
-            ViewBag.Value = sudokuValues;
-            ViewBag.Solution = sudokuValues;
+            ViewBag.Value = _sudokuValues;
+            ViewBag.Solution = _sudokuValues;
             ViewBag.EnableSolution = false;
 
-            var data = new byte[sudokuValues.Length];
+            var data = new byte[_sudokuValues.Length];
             HttpContext.Session.Set("Values", data);
 
             return View();
@@ -79,12 +79,12 @@ namespace SudokuGenerator.Controllers
                     {
                         randomValue = rand.Next(1, 10);
 
-                        row = Enumerable.Range(0, sudokuValues.GetLength(1))
-                        .Select(x => sudokuValues[j, x])
+                        row = Enumerable.Range(0, _sudokuValues.GetLength(1))
+                        .Select(x => _sudokuValues[j, x])
                         .ToList();
 
-                        column = Enumerable.Range(0, sudokuValues.GetLength(0))
-                        .Select(x => sudokuValues[x, i])
+                        column = Enumerable.Range(0, _sudokuValues.GetLength(0))
+                        .Select(x => _sudokuValues[x, i])
                         .ToList();
 
                         while (excludedValues.Contains(randomValue) || row.Contains(randomValue) || column.Contains(randomValue))
@@ -95,14 +95,14 @@ namespace SudokuGenerator.Controllers
                             // Start again if all possible combinations have been already tested
                             if (triesCount <= 0)
                             {
-                                sudokuValues = new int[9, 9];
+                                _sudokuValues = new int[9, 9];
                                 Index(difficulty);
                                 return View();
                             }
                         }
                         triesCount = 81;
-                        sudokuValues[j, i] = randomValue;
-                        sudokuSolution[j, i] = randomValue;
+                        _sudokuValues[j, i] = randomValue;
+                        _sudokuSolution[j, i] = randomValue;
                         excludedValues.Add(randomValue);
                     }
                 }
@@ -124,8 +124,8 @@ namespace SudokuGenerator.Controllers
             CreateSudoku(difficulty);
             SetSessionData(difficulty);
 
-            ViewBag.Solution = sudokuSolution;
-            ViewBag.Value = sudokuValues;
+            ViewBag.Solution = _sudokuSolution;
+            ViewBag.Value = _sudokuValues;
             ViewBag.EnableSolution = true;
 
             return View();
@@ -134,14 +134,14 @@ namespace SudokuGenerator.Controllers
         // Set Session data for PrintSudoku and PrintSolution Views
         public void SetSessionData(string difficulty)
         {
-            var sudokuArray = new byte[sudokuValues.Length];
+            var sudokuArray = new byte[_sudokuValues.Length];
             int index = 0;
 
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    sudokuArray[index] = Convert.ToByte(sudokuValues[i, j]);
+                    sudokuArray[index] = Convert.ToByte(_sudokuValues[i, j]);
                     index++;
                 }
             }
@@ -149,14 +149,14 @@ namespace SudokuGenerator.Controllers
             HttpContext.Session.Set("Values", sudokuArray);
             HttpContext.Session.SetString("Difficulty", difficulty);
 
-            sudokuArray = new byte[sudokuSolution.Length];
+            sudokuArray = new byte[_sudokuSolution.Length];
             index = 0;
 
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    sudokuArray[index] = Convert.ToByte(sudokuSolution[i, j]);
+                    sudokuArray[index] = Convert.ToByte(_sudokuSolution[i, j]);
                     index++;
                 }
             }
@@ -210,9 +210,9 @@ namespace SudokuGenerator.Controllers
                 {
                     for (int i = 0 + nextXCell; i < 3 + nextXCell; i++)
                     {
-                        if (randomValues.Contains(sudokuValues[i, j]))
+                        if (randomValues.Contains(_sudokuValues[i, j]))
                         {
-                            sudokuValues[i, j] = 0;
+                            _sudokuValues[i, j] = 0;
                         }
                     }
                 }
